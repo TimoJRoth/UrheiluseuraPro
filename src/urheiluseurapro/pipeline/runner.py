@@ -4,9 +4,12 @@ import logging
 from pathlib import Path
 
 from urheiluseurapro.collectors.registry import CollectorRegistry
+from urheiluseurapro.collectors.runner import run_collector
 from urheiluseurapro.config import Settings
 from urheiluseurapro.exporters import export_csv, export_json
 from urheiluseurapro.models.club import Club
+from urheiluseurapro.models.enums import SourceCategory
+from urheiluseurapro.models.source import Source
 from urheiluseurapro.pipeline.ingest import ingest_observations
 
 logger = logging.getLogger(__name__)
@@ -27,9 +30,24 @@ async def run_collection(
     collector = registry.get(source_id)
     logger.info("Kerätään lähde: %s (%s)", collector.display_name, collector.source_id)
 
-    observations = await collector.collect()
-    clubs, _ = ingest_observations(observations, existing_clubs or [])
-    logger.info("Master-tietueita: %d (havaintoja: %d)", len(clubs), len(observations))
+    summary = await run_collector(collector)
+    observations = summary.observations
+    sources = {
+        source_id: Source(
+            source_id=source_id,
+            name=collector.display_name,
+            category=SourceCategory.OTHER,
+            geographic_coverage="Kehitys",
+            merge_priority=50,
+        )
+    }
+    clubs, _ = ingest_observations(observations, existing_clubs or [], sources=sources)
+    logger.info(
+        "Master-tietueita: %d (havaintoja: %d, run_id=%s)",
+        len(clubs),
+        len(observations),
+        summary.run.run_id,
+    )
 
     output_dir = settings.resolve_output_dir()
     prefix = f"clubs_{source_id}"

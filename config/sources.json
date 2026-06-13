@@ -1,0 +1,74 @@
+{
+  "sources": [
+    {
+      "source_id": "mock",
+      "display_name": "Mock-lähde (kehitys)",
+      "enabled": true,
+      "confidence_default": 0.75,
+      "base_url": "mock://"
+    },
+    {
+      "source_id": "example-json-feed",
+      "display_name": "Esimerkki JSON-syöte (HTTP)",
+      "enabled": false,
+      "confidence_default": 0.82,
+      "base_url": "https://example.invalid/api",
+      "feed_url": "https://example.invalid/api/clubs"
+    },
+    {
+      "source_id": "palloliitto",
+      "display_name": "Suomen Palloliitto",
+      "enabled": false,
+      "confidence_default": 0.9,
+      "base_url": "https://www.palloliitto.fi"
+    },
+    {
+      "source_id": "koripalloliitto",
+      "display_name": "Suomen Koripalloliitto",
+      "enabled": false,
+      "confidence_default": 0.9,
+      "base_url": "https://www.basket.fi"
+    },
+    {
+      "source_id": "jaakiekko",
+      "display_name": "Suomen Jääkiekkoliitto",
+      "enabled": false,
+      "confidence_default": 0.9,
+      "base_url": "https://www.finhockey.fi"
+    },
+    {
+      "source_id": "lentopallo",
+      "display_name": "Suomen Lentopalloliitto",
+      "enabled": false,
+      "confidence_default": 0.9,
+      "base_url": "https://www.lentopallo.fi"
+    },
+    {
+      "source_id": "salibandy",
+      "display_name": "Suomen Salibandyliitto",
+      "enabled": false,
+      "confidence_default": 0.9,
+      "base_url": "https://www.salibandy.fi"
+    },
+    {
+      "source_id": "kunnat",
+      "display_name": "Kuntien avoimet tiedot",
+      "enabled": false,
+      "confidence_default": 0.85
+    },
+    {
+      "source_id": "prh",
+      "display_name": "Patentti- ja rekisterihallitus (PRH)",
+      "enabled": false,
+      "confidence_default": 0.95,
+      "base_url": "https://www.prh.fi"
+    },
+    {
+      "source_id": "ytj",
+      "display_name": "Yritys- ja yhteisötietojärjestelmä (YTJ)",
+      "enabled": false,
+      "confidence_default": 0.95,
+      "base_url": "https://ytj.fi"
+    }
+  ]
+}

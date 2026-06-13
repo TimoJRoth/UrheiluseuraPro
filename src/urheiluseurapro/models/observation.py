@@ -93,6 +93,20 @@ class ClubObservation(BaseModel):
 
     # --- Metadata ---
     collected_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    first_seen_at: datetime | None = Field(
+        default=None,
+        description="Ensimmäinen havaintoaika (oletus: collected_at)",
+    )
+    last_seen_at: datetime | None = Field(
+        default=None,
+        description="Viimeisin havaintoaika (oletus: collected_at)",
+    )
+    observation_confidence: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Keruutuloksen luottamus",
+    )
     raw: dict[str, Any] | None = Field(default=None, description="Alkuperäinen raakadata")
     normalization_notes: list[str] = Field(default_factory=list)
 

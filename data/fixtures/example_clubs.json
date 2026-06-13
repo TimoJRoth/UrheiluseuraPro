@@ -1,0 +1,57 @@
+{
+  "clubs": [
+    {
+      "source_record_key": "json-club-001",
+      "source_url": "https://example.invalid/api/clubs/json-club-001",
+      "name": "Esimerkki Urheiluseura Delta",
+      "municipality": "Oulu",
+      "sports": ["esimerkkilaji"],
+      "website": "https://example.invalid/delta",
+      "email": "info@delta.example",
+      "phone": "+358 40 400 0001",
+      "address": "Esimerkkikatu 4, 90100 Oulu",
+      "confidence": 0.88,
+      "contact_persons": [
+        {
+          "full_name": "Dan Delta",
+          "role": "sihteeri",
+          "emails": ["sihteeri@delta.example"],
+          "phones": ["+358 40 400 0002"]
+        }
+      ]
+    },
+    {
+      "source_record_key": "json-club-002",
+      "source_url": "https://example.invalid/api/clubs/json-club-002",
+      "name": "Esimerkki Urheiluseura Epsilon",
+      "municipality": "Jyväskylä",
+      "sports": ["esimerkkilaji"],
+      "website": "https://example.invalid/epsilon",
+      "email": "info@epsilon.example",
+      "phone": "+358 40 500 0001",
+      "address": "Testikatu 5, 40100 Jyväskylä",
+      "confidence": 0.86,
+      "contact_persons": [
+        {
+          "full_name": "Eeva Epsilon",
+          "role": "puheenjohtaja",
+          "emails": ["pj@epsilon.example"],
+          "phones": []
+        }
+      ]
+    },
+    {
+      "source_record_key": "json-club-003",
+      "source_url": "https://example.invalid/api/clubs/json-club-003",
+      "name": "Esimerkki Urheiluseura Zeta",
+      "municipality": "Lahti",
+      "sports": ["esimerkkilaji"],
+      "website": "https://example.invalid/zeta",
+      "email": "info@zeta.example",
+      "phone": "+358 40 600 0001",
+      "address": "Demokatu 6, 15100 Lahti",
+      "confidence": 0.84,
+      "contact_persons": []
+    }
+  ]
+}

@@ -27,6 +27,8 @@ class Settings(BaseSettings):
 
     request_delay: float = Field(default=1.0, ge=0.0)
     request_timeout: float = Field(default=30.0, gt=0.0)
+    request_retries: int = Field(default=3, ge=1, le=10)
+    request_retry_backoff_seconds: float = Field(default=0.5, ge=0.0)
     user_agent: str = "UrheiluseuraPro/0.1"
     log_level: str = "INFO"
     output_dir: Path = Field(default_factory=lambda: project_root() / "output")

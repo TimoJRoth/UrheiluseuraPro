@@ -43,7 +43,7 @@ Projekti **ei käytä** Tampermonkeyä, selainlaajennuksia tai selainpohjaista k
 |-------------|------|--------|
 | Lähdekartoitus | 🚧 Käynnissä | `sources.md`, neljä lähderyhmää |
 | Datamallit | ✅ Suunniteltu | Relaatiomalli + merge/dedup – ks. [database-schema.md](database-schema.md) |
-| Ingestorit | ⏳ Odottaa | Ei scrapereita vielä |
+| Ingestorit | ✅ Runko | `BaseCollector`, `MockCollector`, `CollectorRegistry` |
 | Tietokanta | ✅ Skeema valmis | `db/schema.sql` – repository + merge kirjoitus tuleva |
 | Deduplikointi | ✅ Suunniteltu | matcher.py; SQL-toteutus tuleva |
 | CLI | ✅ Runko valmis | `sources`, `collect` |
@@ -64,27 +64,58 @@ Tämä kerros ei ole koodia – se ohjaa ingestoreiden toteutusjärjestystä.
 
 ### 2. Ingestorit (`collectors/`)
 
-Jokainen tietolähde on `BaseCollector`-aliluokka:
+Geneerinen keruuarkkitehtuuri:
+
+```
+BaseCollector.collect() → list[CollectorResult]
+    ↓
+run_collector() → IngestionRun + ClubObservation[]
+    ↓
+ingest_observations() → Club master
+```
+
+| Komponentti | Tiedosto | Rooli |
+|-------------|----------|-------|
+| `BaseCollector` | `collectors/base.py` | Abstrakti rajapinta |
+| `CollectorResult` | `models/collector.py` | Yhtenäinen tulos + provenance |
+| `CollectorRegistry` | `collectors/registry.py` | Rekisteröinti ja haku |
+| `run_collector` | `collectors/runner.py` | Ajon orkestraatio |
+| `MockCollector` | `collectors/mock.py` | Kehitys/testi (3 seuraa muistista) |
+| `HttpClient` | `collectors/http/client.py` | Retry, timeout, rate limit, User-Agent |
+| `HttpCollector` | `collectors/http/base.py` | HTTP/JSON-ingestorien pohja |
+| `JsonFeedCollector` | `collectors/examples/json_feed.py` | Esimerkki HTTP JSON -syötteestä |
 
 ```python
 class BaseCollector(ABC):
     source_id: str
     display_name: str
 
-    async def collect(self) -> list[Club]: ...
+    async def collect(self) -> list[CollectorResult]: ...
     def supports_url(self, url: str) -> bool: ...
 ```
 
 Ingestorit rekisteröidään `CollectorRegistry`-luokkaan. Uusia lähteitä lisätään ilman CLI- tai pipeline-muutoksia.
 
-**Ingestorityypit (suunniteltu):**
+**HTTP-kerros (uudelleenkäytettävä):**
 
-| Tyyppi | Tekniikka | Esimerkkilähde |
-|--------|-----------|----------------|
-| HTML-scraper | httpx + selectolax/BS4 | Kuntien seuralistaukset |
-| API-client | httpx + JSON | Suomisport (jos saatavilla) |
-| Tiedosto-ingestori | openpyxl / pdfplumber | Lajiliiton Excel/PDF |
-| Yhdistelmä | Useita sivuja + sivutus | Laji.fi seurahaku |
+```
+HttpClient.get_json(url)
+    → retry (429/5xx), timeout, rate limit, User-Agent
+    → HttpFetchMetadata (url, fetched_at, status_code)
+    ↓
+HttpCollector.parse_club_records(payload)
+    ↓
+CollectorResult (source_url, fetched_at, ClubObservation)
+```
+
+Ingestorit rekisteröidään `CollectorRegistry`-luokkaan. Oletusrekisterissä on `MockCollector`; HTTP-ingestorit rekisteröidään erikseen kun lähde on valmis.
+
+**Tulevat ingestorityypit:**
+
+| Tyyppi | Tekniikka | Huomio |
+|--------|-----------|--------|
+| JSON/API | `HttpClient` + `HttpCollector` | Viralliset rajapinnat ensin |
+| Tiedosto-ingestori | openpyxl / pdfplumber | Manuaalisesti ladattu data |
 
 ### 3. Datamallit (`models/`)
 
@@ -158,18 +189,15 @@ Funktiot `export_csv()` ja `export_json()` kirjoittavat tulokset `output/`-kansi
 7. CLI tulostaa: "Kerätty 142 seuraa, tallennettu 138 (4 duplikaattia)"
 ```
 
-## Lähderyhmät arkkitehtuurissa
+## Lähderyhmät arkkitehtuurissa (tuleva)
 
 ```
 sources.md (inventaario)
     │
-    ├── lajiliitot/          → collectors/federations/
-    ├── aluejärjestöt/       → collectors/regions/
-    ├── kunnat/              → collectors/municipalities/
-    └── muut/                → collectors/directories/
+    └── BaseCollector-aliluokka + CollectorRegistry.register()
 ```
 
-Kansiorakenne ingestoreille tarkentuu vaiheessa 2. Nykyinen `collectors/`-rakenne säilyy yhteisen rajapinnan (`BaseCollector`) ympärillä.
+Nykyinen `collectors/`-rakenne tarjoaa geneerisen rajapinnan (`BaseCollector`, `MockCollector`). Oikeat lähteet lisätään myöhemmin dokumentoinnin (`sources.md`) jälkeen.
 
 ## Konfiguraatio
 
