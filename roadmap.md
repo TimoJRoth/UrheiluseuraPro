@@ -28,8 +28,7 @@ Tavoite: tietää **mistä** data tulee, ennen kuin scrapereita rakennetaan.
 - [x] Skeeman validointi: [docs/schema-validation.md](docs/schema-validation.md)
 - [x] Relaatiomallit (`models/relational/`)
 - [x] Dokumentaatio: [docs/database-schema.md](docs/database-schema.md)
-- [ ] Repository-kerros (SQL INSERT/SELECT)
-- [ ] Merge-engine → relaatiotaulut
+- [x] Repository-kerros SQLite:lle (`src/urheiluseurapro/db/repository.py`)
 
 **Ei tässä vaiheessa:** scraperit, asennuskomennot, verkkopyyntöjä tuotantodatalla.
 
