@@ -29,6 +29,7 @@ Tavoite: tietää **mistä** data tulee, ennen kuin scrapereita rakennetaan.
 - [x] Relaatiomallit (`models/relational/`)
 - [x] Dokumentaatio: [docs/database-schema.md](docs/database-schema.md)
 - [x] Repository-kerros SQLite:lle (`src/urheiluseurapro/db/repository.py`)
+- [x] Merge-engine: append-only provenance (`src/urheiluseurapro/merge/`)
 
 **Ei tässä vaiheessa:** scraperit, asennuskomennot, verkkopyyntöjä tuotantodatalla.
 
@@ -53,9 +54,9 @@ Tavoite: tietää **mistä** data tulee, ennen kuin scrapereita rakennetaan.
 
 ## Vaihe 4 – Tietokannan rikastaminen
 
-- [ ] Usean lähteen yhdistäminen (golden record)
-- [ ] Puuttuvien kenttien täydennys toissijaisista lähteistä
-- [ ] Konfliktien käsittely (eri sähköposti eri lähteissä)
+- [x] Usean lähteen yhdistäminen (golden record, append-only merge)
+- [x] Konfliktien käsittely (eri sähköposti eri lähteissä, confidence_score)
+- [ ] Puuttuvien kenttien täydennys toissijaisista lähteistä (SQL-repository integraatio)
 - [ ] Maakunta- ja postinumeropäättely
 - [ ] Excel-vienti (openpyxl)
 - [ ] `--dry-run` ja `--limit` CLI-parametrit

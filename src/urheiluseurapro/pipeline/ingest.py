@@ -54,7 +54,9 @@ def ingest_observations(
         if match.master_club_id:
             idx = next(i for i, c in enumerate(clubs) if c.id == match.master_club_id)
             source = sources.get(observation.source_id)
-            clubs[idx] = merge_observation_into_club(clubs[idx], observation, source)
+            clubs[idx] = merge_observation_into_club(
+                clubs[idx], observation, source, sources=sources
+            )
             processed.append(
                 observation.model_copy(
                     update={
@@ -69,7 +71,13 @@ def ingest_observations(
             continue
 
         canonical_key = build_canonical_key(observation)
-        new_club = observation_to_club(observation, canonical_key=canonical_key)
+        source = sources.get(observation.source_id)
+        new_club = observation_to_club(
+            observation,
+            canonical_key=canonical_key,
+            source=source,
+            sources=sources,
+        )
         clubs.append(new_club)
         processed.append(
             observation.model_copy(

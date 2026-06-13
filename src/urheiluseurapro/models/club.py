@@ -14,6 +14,7 @@ from typing import Any
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from urheiluseurapro.models.enums import ClubStatus, ClubType, LegalForm
+from urheiluseurapro.models.merge_state import FieldObservation, MasterFieldValue
 from urheiluseurapro.models.provenance import ClubSourceLink, FieldProvenance
 
 
@@ -153,6 +154,14 @@ class Club(BaseModel):
     # --- Provenienssi ---
     source_links: list[ClubSourceLink] = Field(default_factory=list)
     field_provenance: list[FieldProvenance] = Field(default_factory=list)
+    field_observations: list[FieldObservation] = Field(
+        default_factory=list,
+        description="Kaikki lähdehavainnot kentittäin – ei koskaan automaattipoistoa",
+    )
+    master_values: dict[str, MasterFieldValue] = Field(
+        default_factory=dict,
+        description="Lasketut master-arvot ja confidence",
+    )
 
     # --- Aikaleimat ---
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

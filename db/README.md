@@ -9,6 +9,17 @@ Suomen kattavin urheiluseurojen **master-tietokanta** – ei scraper-projekti.
 | [seed/reference.sql](seed/reference.sql) | Lajit, maakunnat, kaupungit |
 | [queries/examples.sql](queries/examples.sql) | Esimerkkikyselyt |
 | `src/urheiluseurapro/db/repository.py` | SQLite-repository |
+| `src/urheiluseurapro/merge/engine.py` | Merge-engine (havainnot → master) |
+
+## Merge ja provenance
+
+Merge-engine (`merge/engine.py`) toimii sovelluskerroksessa ennen SQL-kirjoitusta:
+
+- **Havainnot** → `observations` + `observation_*` -taulut (staging)
+- **Master** → `organizations` + liitostaulut
+- **Provenienssi** → `field_provenance` (linkittää master-kentän havaintoon)
+
+Periaate: havaintoja ei poisteta merge-vaiheessa; master-arvo päivittyy uudelleenlaskennalla.
 
 ## Käyttö (Python)
 
