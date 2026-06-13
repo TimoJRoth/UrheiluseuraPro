@@ -26,6 +26,7 @@ Rakentaa luotettava, toistettava ja laajennettava **urheiluseurojen tietokanta**
 | SQLite-skeema | ✅ | `db/schema.sql` v1.2.0 |
 | Repository-kerros | ✅ | `SQLiteRepository` – CRUD ja haut |
 | Merge-engine | ✅ | Append-only havainnot, master-valinta prioriteetilla |
+| Yhteyshenkilöt | ✅ | Useita rooleja, append-only provenance, roolikohtainen master |
 | Modulaariset ingestorit | 🚧 | Abstrakti `BaseCollector`, toteutus myöhemmin |
 | Deduplikointi | ✅ | Nimi + kunta + laji / Y-tunnus |
 | Vienti | ✅ | CSV, JSON |
@@ -114,7 +115,27 @@ club = observation_to_club(observation, sources=sources)
 club = merge_observation_into_club(club, another_observation, source, sources=sources)
 ```
 
-Testit: `pytest tests/test_merge_engine.py`
+Testit: `pytest tests/test_merge_engine.py tests/test_contact_person_merge.py`
+
+### Yhteyshenkilöt
+
+Seuralla voi olla useita yhteyshenkilöitä eri rooleissa (puheenjohtaja, sihteeri, …). Havainnot tallennetaan `ContactPersonObservation`-rakenteisiin; master valitaan roolikohtaisesti:
+
+```python
+from urheiluseurapro.models.contact_person import ObservationContactPerson
+
+observation = ClubObservation(
+    ...,
+    contact_persons=[
+        ObservationContactPerson(
+            full_name="Maija Meikäläinen",
+            role="sihteeri",
+            emails=["maija@ilves.fi"],
+            phones=["+358 40 123 4567"],
+        ),
+    ],
+)
+```
 
 ## Dokumentaatio
 

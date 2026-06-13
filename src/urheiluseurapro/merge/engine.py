@@ -8,12 +8,16 @@ from datetime import datetime, timezone
 from typing import Callable
 from uuid import uuid4
 
+from urheiluseurapro.merge.contact_persons import (
+    append_contact_person_observations,
+    apply_contact_person_masters,
+    recompute_master_contact_persons,
+)
 from urheiluseurapro.merge.priorities import resolve_source_priority
 from urheiluseurapro.models.club import (
     Club,
     ClubActivity,
     ClubContact,
-    ClubContactPerson,
     ClubExternalIds,
     ClubIdentity,
     ClubLegal,
@@ -465,8 +469,11 @@ def observation_to_club(
     )
 
     club, _ = append_observation_fields(club, observation, source=source)
+    club, _ = append_contact_person_observations(club, observation)
     masters = recompute_master_values(club, sources)
+    master_contact_persons = recompute_master_contact_persons(club, sources)
     club = _apply_masters_to_club(club, masters, sources)
+    club = apply_contact_person_masters(club, master_contact_persons, sources)
 
     if observation.name_normalized:
         identity = club.identity.model_copy(update={"name_normalized": observation.name_normalized})
@@ -474,12 +481,6 @@ def observation_to_club(
 
     club = club.model_copy(
         update={
-            "contact_person": ClubContactPerson(
-                name=observation.contact_person_name,
-                role=observation.contact_person_role,
-                email=observation.contact_person_email,
-                phone=observation.contact_person_phone,
-            ),
             "external_ids": ClubExternalIds(
                 suomisport_id=observation.suomisport_id,
                 federation_ids=(
@@ -499,12 +500,16 @@ def observation_to_club(
             "source_links": _upsert_source_link(club, observation),
             "field_provenance": _update_provenance(club, masters),
             "field_observations": list(club.field_observations),
+            "contact_person_observations": list(club.contact_person_observations),
+            "master_contact_persons": dict(club.master_contact_persons),
         }
     )
 
     club.quality.completeness_score = _calculate_completeness(club)
     club.quality.confidence_score = _calculate_overall_confidence(club)
-    club.quality.needs_review = any(m.has_conflict for m in masters.values())
+    club.quality.needs_review = (
+        club.quality.needs_review or any(m.has_conflict for m in masters.values())
+    )
     return club
 
 
@@ -525,10 +530,14 @@ def merge_observation_into_club(
         sources = {**sources, source.source_id: source}
 
     observation_count_before = len(club.field_observations)
+    contact_person_count_before = len(club.contact_person_observations)
 
     club, added = append_observation_fields(club, observation, source=source)
+    club, cp_added = append_contact_person_observations(club, observation)
     masters = recompute_master_values(club, sources)
+    master_contact_persons = recompute_master_contact_persons(club, sources)
     merged = _apply_masters_to_club(club, masters, sources)
+    merged = apply_contact_person_masters(merged, master_contact_persons, sources)
 
     identity = merged.identity.model_copy()
     if observation.name_normalized:
@@ -549,7 +558,11 @@ def merge_observation_into_club(
     quality = merged.quality.model_copy()
     quality.source_count = len(source_links)
     quality.merge_version += 1
-    quality.needs_review = quality.needs_review or any(m.has_conflict for m in masters.values())
+    quality.needs_review = (
+        quality.needs_review
+        or any(m.has_conflict for m in masters.values())
+        or any(m.has_conflict for m in master_contact_persons.values())
+    )
 
     result = merged.model_copy(
         update={
@@ -559,6 +572,9 @@ def merge_observation_into_club(
             "source_links": source_links,
             "field_provenance": _update_provenance(merged, masters),
             "field_observations": list(merged.field_observations),
+            "contact_person_observations": list(merged.contact_person_observations),
+            "master_contact_persons": dict(merged.master_contact_persons),
+            "contact_person": merged.contact_person,
             "quality": quality,
             "updated_at": now,
             "last_merged_at": now,
@@ -578,6 +594,14 @@ def merge_observation_into_club(
         assert len(result.field_observations) == observation_count_before + len(added), (
             "Uudet havainnot pitää säilyttää kokonaisuudessaan"
         )
+    assert len(result.contact_person_observations) >= contact_person_count_before, (
+        "Yhteyshenkilöhavaintoja ei saa poistaa merge-vaiheessa"
+    )
+    if cp_added:
+        assert (
+            len(result.contact_person_observations)
+            == contact_person_count_before + len(cp_added)
+        ), "Uudet yhteyshenkilöhavainnot pitää säilyttää kokonaisuudessaan"
     return result
 
 

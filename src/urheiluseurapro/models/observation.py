@@ -12,6 +12,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, HttpUrl
 
+from urheiluseurapro.models.contact_person import ObservationContactPerson
 from urheiluseurapro.models.enums import ClubStatus, ClubType, LegalForm, MatchConfidence, MatchStatus
 
 
@@ -62,7 +63,9 @@ class ClubObservation(BaseModel):
     phone_raw: str | None = None
     phone_normalized: str | None = None
 
-    # --- Yhteyshenkilö ---
+    # --- Yhteyshenkilöt ---
+    contact_persons: list[ObservationContactPerson] = Field(default_factory=list)
+    # Legacy-yksittäiskentät (tuettu yhteensopivuuden vuoksi)
     contact_person_name: str | None = None
     contact_person_role: str | None = None
     contact_person_email: str | None = None

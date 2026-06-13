@@ -13,6 +13,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
+from urheiluseurapro.models.contact_person import (
+    ContactPersonObservation,
+    MasterContactPerson,
+)
 from urheiluseurapro.models.enums import ClubStatus, ClubType, LegalForm
 from urheiluseurapro.models.merge_state import FieldObservation, MasterFieldValue
 from urheiluseurapro.models.provenance import ClubSourceLink, FieldProvenance
@@ -147,6 +151,14 @@ class Club(BaseModel):
     location: ClubLocation = Field(default_factory=ClubLocation)
     contact: ClubContact = Field(default_factory=ClubContact)
     contact_person: ClubContactPerson = Field(default_factory=ClubContactPerson)
+    contact_person_observations: list[ContactPersonObservation] = Field(
+        default_factory=list,
+        description="Kaikki yhteyshenkilöhavainnot – ei koskaan automaattipoistoa",
+    )
+    master_contact_persons: dict[str, MasterContactPerson] = Field(
+        default_factory=dict,
+        description="Roolikohtaiset master-yhteyshenkilöt",
+    )
     external_ids: ClubExternalIds = Field(default_factory=ClubExternalIds)
     activity: ClubActivity = Field(default_factory=ClubActivity)
     quality: ClubQuality = Field(default_factory=ClubQuality)

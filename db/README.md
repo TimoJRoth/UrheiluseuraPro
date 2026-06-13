@@ -21,6 +21,15 @@ Merge-engine (`merge/engine.py`) toimii sovelluskerroksessa ennen SQL-kirjoitust
 
 Periaate: havaintoja ei poisteta merge-vaiheessa; master-arvo päivittyy uudelleenlaskennalla.
 
+### Yhteyshenkilöt
+
+| SQL | Sovelluskerros |
+|-----|----------------|
+| `observation_contact_persons` | `ContactPersonObservation` |
+| `organization_contact_persons` | `MasterContactPerson` (roolikohtainen master) |
+
+Merge: `merge/contact_persons.py` – append-only, roolikohtainen master-valinta.
+
 ## Käyttö (Python)
 
 ```python

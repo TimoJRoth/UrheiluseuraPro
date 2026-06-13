@@ -81,3 +81,16 @@ class FieldSource(StrEnum):
     MERGED = "merged"
     MANUAL = "manual"
     CONFLICT = "conflict"
+
+
+class ContactPersonRole(StrEnum):
+    """Yhteyshenkilön rooli seurassa."""
+
+    CHAIR = "puheenjohtaja"
+    SECRETARY = "sihteeri"
+    MANAGING_DIRECTOR = "toiminnanjohtaja"
+    TREASURER = "rahastonhoitaja"
+    JUNIOR_DIRECTOR = "junioripaallikko"
+    COACHING_DIRECTOR = "valmennuspaallikko"
+    CONTACT = "yhteyshenkilö"
+    OTHER = "muu"

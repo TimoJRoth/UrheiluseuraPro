@@ -156,6 +156,28 @@ Konflikti havaittu
     └─→ needs_review = True (jos useita eri arvoja)
 ```
 
+### Yhteyshenkilöt
+
+**Tilanne:** Lähde A: sihteeri Maija (`maija@ilves.fi`), lähde B: sihteeri Pekka (`pekka@ilves.fi`)
+
+| Toimenpide | Sallittu | Kielletty |
+|------------|----------|-----------|
+| Säilytä molemmat henkilöhavainnot | ✅ | |
+| Valitse master roolikohtaisesti prioriteetin perusteella | ✅ | |
+| Poista heikomman lähteen havainto | | ❌ |
+| Ylikirjoita A:n havainto B:llä | | ❌ |
+
+**Roolit:** puheenjohtaja, sihteeri, toiminnanjohtaja, rahastonhoitaja, junioripäällikkö, valmennuspäällikkö, yhteyshenkilö, muu.
+
+**Erityistapaukset:**
+
+- Sama henkilö kahdessa lähteessä → kaksi `ContactPersonObservation`-riviä, master yhdistää `supporting_sources`-listaan
+- Sama rooli, eri henkilö → konflikti (`has_conflict`), korkeampi prioriteetti voittaa masterissa
+- Sähköposti tai puhelin vaihtuu uudessa havainnossa → vanha havainto säilyy, master käyttää voittavan havainnon yhteystietoja
+- Henkilöllä voi olla useita sähköposteja ja puhelinnumeroita yhdessä havainnossa
+
+**Toteutus:** `merge/contact_persons.py`, `ContactPersonObservation`, `MasterContactPerson`
+
 ---
 
 ## 3. Lähdeprioriteetit (master-valinta)
@@ -189,9 +211,11 @@ Täysi prioriteettilista: `merge/priorities.py`
 │ DEDUP          match_observation_to_club() → master-org      │
 ├─────────────────────────────────────────────────────────────┤
 │ MERGE          append_observation_fields()  ← append-only    │
+│                append_contact_person_observations()          │
 │                recompute_master_values()    ← deterministinen│
+│                recompute_master_contact_persons()              │
 ├─────────────────────────────────────────────────────────────┤
-│ MASTER         Club + MasterFieldValue (laskettu näkymä)     │
+│ MASTER         Club + MasterFieldValue + MasterContactPerson│
 ├─────────────────────────────────────────────────────────────┤
 │ SQL            observations*, organizations*, field_provenance│
 └─────────────────────────────────────────────────────────────┘
@@ -226,8 +250,9 @@ Periaatteet on lukittu testeihin:
 | `test_master_updates_without_losing_history` | 1, 4 |
 | `test_supporting_sources_when_sources_agree` | 7, 8 |
 | `test_duplicate_observation_not_appended_twice` | 2 (idempotenssi) |
+| `tests/test_contact_person_merge.py` | Yhteyshenkilöiden append-only ja roolikonfliktit |
 
-Aja: `pytest tests/test_merge_engine.py`
+Aja: `pytest tests/test_merge_engine.py tests/test_contact_person_merge.py`
 
 ---
 
@@ -237,7 +262,8 @@ Aja: `pytest tests/test_merge_engine.py`
 |----------|-------|
 | `src/urheiluseurapro/merge/engine.py` | Merge-logiikka |
 | `src/urheiluseurapro/merge/priorities.py` | Lähdeprioriteetit |
-| `src/urheiluseurapro/models/merge_state.py` | `FieldObservation`, `MasterFieldValue` |
+| `src/urheiluseurapro/merge/contact_persons.py` | Yhteyshenkilöiden merge |
+| `src/urheiluseurapro/models/contact_person.py` | `ContactPersonObservation`, `MasterContactPerson` |
 | `src/urheiluseurapro/models/provenance.py` | `FieldProvenance`, `ClubSourceLink` |
 | `db/schema.sql` | Staging + provenance -taulut |
 | `tests/test_merge_engine.py` | Periaatteiden regressiotestit |
