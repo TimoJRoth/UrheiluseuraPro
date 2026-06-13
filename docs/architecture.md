@@ -214,3 +214,5 @@ Kansiorakenne ingestoreille tarkentuu vaiheessa 2. Nykyinen `collectors/`-rakenn
 - **Kohtuullinen kuormitus** – konfiguroitava viive
 - **Provenienssi** – tieto ei koskaan ilman `source_id`:tä
 - **Headless-selain vain poikkeuksena** – dokumentoidaan erikseen, jos HTML-lähde vaatii JS-renderöinnin
+
+**Sitovat merge- ja provenance-säännöt:** [ARKKITEHTUURI.md](ARKKITEHTUURI.md)

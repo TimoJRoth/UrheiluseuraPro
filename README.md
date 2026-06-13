@@ -60,7 +60,8 @@ UrheiluseuraPro/
 │       ├── exporters/        # CSV/JSON-vienti
 │       └── pipeline/         # Keruu- ja tallennusputki
 ├── docs/
-│   ├── architecture.md       # Arkkitehtuuri ja tietovirta
+│   ├── ARKKITEHTUURI.md      # Pysyvät suunnitteluperiaatteet (normatiivinen)
+│   ├── architecture.md       # Komponentit ja tietovirta
 │   └── getting-started.md    # Kehittäjän aloitusopas
 ├── data/
 │   ├── raw/                  # Manuaalisesti ladattu raakadata
@@ -90,6 +91,8 @@ Asennusohjeet tulevat käyttöön, kun ensimmäinen ingestori on valmis. Kehitt�
 5. **Ei selainriippuvuutta** – HTML/API/Excel ensisijaisesti
 6. **Havainnot säilyvät** – merge ei koskaan poista lähdedataa; master lasketaan erikseen
 
+Katso sitovat arkkitehtuurisäännöt: **[docs/ARKKITEHTUURI.md](docs/ARKKITEHTUURI.md)** (havaintojen säilytys, provenance, ristiriidat, determinismi).
+
 ## Merge-engine
 
 Jokainen lähdehavainto tallennetaan erikseen (`FieldObservation`). Master-arvot lasketaan havainnoista:
@@ -115,6 +118,7 @@ Testit: `pytest tests/test_merge_engine.py`
 
 ## Dokumentaatio
 
+- [**Arkkitehtuuriset periaatteet**](docs/ARKKITEHTUURI.md) – pysyvät säännöt: havainnot, provenance, ristiriidat
 - [Kehityssuunnitelma](roadmap.md)
 - [Lähdekartoitus](sources.md)
 - [Tietokantaskeema (SQL)](docs/database-schema.md)
