@@ -58,7 +58,7 @@ def test_json_import_returns_collector_results() -> None:
     assert len(results) == 2
     delta = next(r for r in results if r.observation.name_raw.endswith("Delta"))
     assert delta.observation.sports_raw == ["jalkapallo"]
-    assert delta.observation.phone_raw == "+358 40 400 0001"
+    assert delta.observation.phone_raw == "+358404000001"
 
 
 def test_missing_optional_fields_are_allowed() -> None:

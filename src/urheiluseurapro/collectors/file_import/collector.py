@@ -14,6 +14,7 @@ from urheiluseurapro.config import Settings
 from urheiluseurapro.models.collector import CollectorResult
 from urheiluseurapro.models.contact_person import ObservationContactPerson
 from urheiluseurapro.models.source_config import SourceConfig
+from urheiluseurapro.normalizers import normalize_club_record
 from urheiluseurapro.sources.registry import SourceConfigRegistry
 
 
@@ -50,7 +51,7 @@ class FileImportCollector(BaseCollector):
 
     async def collect(self) -> list[CollectorResult]:
         fetched_at = datetime.now(timezone.utc)
-        records = load_records(self._file_path, field_mapping=self._field_mapping)
+        records = [normalize_club_record(record) for record in load_records(self._file_path, field_mapping=self._field_mapping)]
         source_url = self._file_path.resolve().as_uri()
         return [
             self._record_to_result(record, source_url=source_url, fetched_at=fetched_at, row_index=index)

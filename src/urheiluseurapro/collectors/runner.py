@@ -10,6 +10,7 @@ from urheiluseurapro.collectors.base import BaseCollector
 from urheiluseurapro.models.collector import CollectorResult
 from urheiluseurapro.models.ingestion import IngestionRun
 from urheiluseurapro.models.observation import ClubObservation
+from urheiluseurapro.normalizers import normalize_observation
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,9 @@ async def run_collector(collector: BaseCollector) -> CollectorRunSummary:
         raw_results = await collector.collect()
         results: list[CollectorResult] = []
         for result in raw_results:
-            observation = result.observation.model_copy(update={"ingestion_run_id": run_id})
+            observation = normalize_observation(
+                result.observation.model_copy(update={"ingestion_run_id": run_id})
+            )
             results.append(
                 CollectorResult(
                     source=result.source,
