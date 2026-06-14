@@ -17,6 +17,7 @@ from urheiluseurapro.config import Settings
 from urheiluseurapro.models.collector import CollectorResult
 from urheiluseurapro.models.contact_person import ObservationContactPerson
 from urheiluseurapro.models.source_config import SourceConfig
+from urheiluseurapro.normalizers import normalize_club_record
 from urheiluseurapro.sources.registry import SourceConfigRegistry
 
 
@@ -118,6 +119,7 @@ class HtmlCollector(HttpCollector):
         record: dict[str, Any],
         meta: HttpFetchMetadata,
     ) -> CollectorResult:
+        normalized = normalize_club_record(record)
         contact_persons = [
             ObservationContactPerson(
                 full_name=person["full_name"],
@@ -125,27 +127,27 @@ class HtmlCollector(HttpCollector):
                 emails=person.get("emails", []),
                 phones=person.get("phones", []),
             )
-            for person in record.get("contact_persons", [])
+            for person in normalized.get("contact_persons", [])
         ]
 
         source_url = record.get("source_url") or meta.url
 
         return self.build_result(
-            name_raw=record["name"],
-            municipality_raw=record.get("municipality"),
-            sports_raw=record.get("sports", []),
+            name_raw=normalized["name"],
+            municipality_raw=normalized.get("municipality"),
+            sports_raw=normalized.get("sports", []),
             source_record_key=record.get("source_record_key"),
             source_url=source_url,
-            website_raw=record.get("website"),
-            email_raw=record.get("email"),
-            phone_raw=record.get("phone"),
-            address_raw=record.get("address"),
+            website_raw=normalized.get("website"),
+            email_raw=normalized.get("email"),
+            phone_raw=normalized.get("phone"),
+            address_raw=normalized.get("address"),
             contact_persons=contact_persons,
             confidence=record.get("confidence", self.default_confidence),
             fetched_at=meta.fetched_at,
             raw={
                 "collector": self.source_id,
                 "http": self.build_http_provenance(meta),
-                "record": record,
+                "record": normalized,
             },
         )

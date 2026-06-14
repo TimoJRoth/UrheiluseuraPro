@@ -1,0 +1,23 @@
+{
+  "clubs": [
+    {
+      "source_record_key": "json-messy-001",
+      "source_url": "https://example.invalid/api/clubs/json-messy-001",
+      "name": "  Esimerkki Urheiluseura Messy JSON  ",
+      "municipality": "  tampere  ",
+      "sports": " Jalkapallo ; Futsal ",
+      "website": "example.invalid/messy-json",
+      "email": "  INFO@MESSY-JSON.EXAMPLE  ",
+      "phone": "+358 (40) 800 0001",
+      "address": "  Messy JSON katu 1  ",
+      "contact_persons": [
+        {
+          "full_name": "  Dan Messy  ",
+          "role": "  sihteeri  ",
+          "emails": ["  SIHTEERI@MESSY-JSON.EXAMPLE  "],
+          "phones": ["+358 (40) 800 0002"]
+        }
+      ]
+    }
+  ]
+}

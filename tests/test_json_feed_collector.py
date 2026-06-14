@@ -114,3 +114,33 @@ def test_json_feed_uses_source_config_not_hardcoded_values() -> None:
     assert collector.display_name == "Esimerkki JSON-syöte (HTTP)"
     assert collector.default_confidence == 0.82
     assert collector.feed_url == FEED_URL
+
+
+def test_json_feed_collector_normalizes_messy_data() -> None:
+    messy_json = (FIXTURE_PATH.parent / "example_clubs_messy.json").read_text(encoding="utf-8")
+    transport = httpx.MockTransport(
+        lambda request: httpx.Response(200, text=messy_json, request=request)
+    )
+    source_config = _json_feed_source_config()
+
+    async def run() -> object:
+        client = HttpClient(source_config, transport=transport)
+        await client.__aenter__()
+        collector = JsonFeedCollector(
+            source_config=source_config,
+            settings=_fast_settings(),
+            http_client=client,
+        )
+        return await run_collector(collector)
+
+    summary = asyncio.run(run())
+    obs = summary.observations[0]
+
+    assert obs.name_raw == "Esimerkki Urheiluseura Messy JSON"
+    assert obs.municipality_raw == "Tampere"
+    assert obs.sports_raw == ["jalkapallo", "futsal"]
+    assert obs.email_raw == "info@messy-json.example"
+    assert obs.website_raw == "https://example.invalid/messy-json"
+    assert obs.phone_raw == "+358408000001"
+    assert obs.email_normalized == "info@messy-json.example"
+    assert obs.contact_persons[0].emails == ["sihteeri@messy-json.example"]

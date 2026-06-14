@@ -339,3 +339,24 @@ def test_uses_source_config_confidence() -> None:
         return result.confidence
 
     assert asyncio.run(run()) == 0.81
+
+
+def test_html_collector_normalizes_messy_data() -> None:
+    messy_html = (FIXTURE_DIR / "example_clubs_messy.html").read_text(encoding="utf-8")
+    transport = _mock_transport(html=messy_html)
+
+    async def run() -> object:
+        collector = await _collector_with_transport(transport)
+        return await run_collector(collector)
+
+    summary = asyncio.run(run())
+    obs = summary.observations[0]
+
+    assert obs.name_raw == "Esimerkki Urheiluseura Messy HTML"
+    assert obs.municipality_raw == "Tampere"
+    assert obs.sports_raw == ["jalkapallo", "futsal"]
+    assert obs.email_raw == "info@messy-html.example"
+    assert obs.website_raw == "https://example.invalid/messy-html"
+    assert obs.phone_raw == "+358409000001"
+    assert obs.contact_persons[0].full_name == "Eeva Messy"
+    assert obs.contact_persons[0].emails == ["sihteeri@messy-html.example"]
