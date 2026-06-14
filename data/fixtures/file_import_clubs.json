@@ -1,0 +1,24 @@
+{
+  "clubs": [
+    {
+      "name": "Esimerkki Urheiluseura File Delta",
+      "municipality": "Oulu",
+      "sports": ["jalkapallo"],
+      "website": "https://example.invalid/delta",
+      "email": "info@delta.example",
+      "phone": "+358 40 400 0001",
+      "address": "Esimerkkikatu 4, 90100 Oulu",
+      "contact_person_name": "Dan Delta",
+      "contact_person_role": "sihteeri",
+      "contact_person_email": "sihteeri@delta.example",
+      "contact_person_phone": "+358 40 400 0002"
+    },
+    {
+      "name": "Esimerkki Urheiluseura File Epsilon",
+      "municipality": "Lahti",
+      "sports": ["jalkapallo", "futsal"],
+      "website": "https://example.invalid/epsilon",
+      "email": "info@epsilon.example"
+    }
+  ]
+}

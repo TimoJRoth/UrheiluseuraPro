@@ -1,0 +1,4 @@
+name,municipality,sports,website,email,phone,address,contact_person_name,contact_person_role,contact_person_email,contact_person_phone
+Esimerkki Urheiluseura File Alpha,Tampere,jalkapallo,https://example.invalid/alpha,info@alpha.example,+358 40 100 0001,"Esimerkkikatu 1, 33100 Tampere",Ada Alpha,sihteeri,sihteeri@alpha.example,+358 40 100 0002
+Esimerkki Urheiluseura File Beta,Helsinki,jalkapallo;futsal,https://example.invalid/beta,info@beta.example,+358 40 200 0001,"Testikatu 2, 00100 Helsinki",Ben Beta,puheenjohtaja,pj@beta.example,
+Esimerkki Urheiluseura File Gamma,Turku,jalkapallo,https://example.invalid/gamma,info@gamma.example,+358 40 300 0001,"Demokatu 3, 20100 Turku",,,,
