@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -26,3 +28,11 @@ class SourceConfig(BaseModel):
     feed_url: str | None = None
 
     model_config = {"frozen": True}
+
+    @classmethod
+    def from_merged(cls, *parts: dict[str, Any]) -> SourceConfig:
+        """Rakenna yhdistämällä osat – jokainen kenttä välittyy vain kerran."""
+        merged: dict[str, Any] = {}
+        for part in parts:
+            merged.update(part)
+        return cls.model_validate(merged)
